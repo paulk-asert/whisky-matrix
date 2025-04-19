@@ -25,6 +25,7 @@ import smile.feature.extraction.PCA
 def url = getClass().getResource('whisky.csv')
 Matrix m = CsvImporter.importCsv(url).dropColumns('RowID')
 println m.dimensions()
+
 def features = m.columnNames() - 'Distillery'
 def size = features.size()
 features.each { feature ->
@@ -33,7 +34,6 @@ features.each { feature ->
 println m.head(3)
 
 def selected= m.subset{ it.Fruity > 0.5 && it.Sweetness > 0.5 }
-
 println selected.dimensions()
 println selected.head(10)
 
