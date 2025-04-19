@@ -39,9 +39,10 @@ println selected.head(10)
 
 def aberlour = selected.subset(0..0)
 def rc = RadarChart.create(aberlour)
-    .addSeries('Distillery')
+    .addSeries('Distillery', 80)
 
 rc.exportPng('matrixAberlourRadar.png' as File)
+new SwingWrapper(rc.exportSwing().chart).displayChart()
 
 rc = RadarChart.create(selected)
     .addSeries('Distillery', 80)
