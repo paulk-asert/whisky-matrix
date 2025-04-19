@@ -22,7 +22,7 @@ import se.alipsa.matrix.xchart.ScatterChart
 import smile.clustering.KMeans
 import smile.feature.extraction.PCA
 
-def url = getClass().getResource('whiskey.csv')
+def url = getClass().getResource('whisky.csv')
 Matrix m = CsvImporter.importCsv(url).dropColumns('RowID')
 println m.dimensions()
 def features = m.columnNames() - 'Distillery'
@@ -61,7 +61,7 @@ m['Y'] = projected*.getAt(1)
 
 def clusters = m['Cluster'].toSet()
 def sc = ScatterChart.create(m)
-sc.title = 'Whiskey Flavor Clusters'
+sc.title = 'Whisky Flavor Clusters'
 for (i in clusters) {
     def series = m.subset('Cluster', i)
     sc.addSeries("Cluster $i", series.column('X'), series.column('Y'))
@@ -80,5 +80,5 @@ def corrMatrix = Matrix.builder().data(X: 0..<corr.size(), Heat: corr)
 
 def hc = HeatmapChart.create(corrMatrix)
     .addSeries('Heat Series', features.reverse(), features, corrMatrix.column('Heat').collate(size))
-hc.exportPng('matrixWhiskeyCorrHeatmap.png' as File)
+hc.exportPng('matrixWhiskyCorrHeatmap.png' as File)
 new SwingWrapper(hc.exportSwing().chart).displayChart()
