@@ -54,6 +54,16 @@ def data = m.selectColumns(*features) as double[][]
 def model = KMeans.fit(data,3, 20)
 m['Cluster'] = model.group().toList()
 
+def result = GQ {
+    from w in m
+    groupby w.Cluster
+    orderby w.Cluster
+    select w.Cluster, count(w.Cluster) as Count
+}
+println result
+
+assert m.rows().countBy{ it.Cluster } == [0:51, 1:23, 2:12]
+
 def pca = PCA.fit(data)
 def projected = pca.getProjection(2).apply(data)
 m['X'] = projected*.getAt(0)
