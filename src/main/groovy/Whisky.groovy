@@ -54,6 +54,11 @@ def data = m.selectColumns(*features) as double[][]
 def model = KMeans.fit(data,3, 20)
 m['Cluster'] = model.group().toList()
 
+println 'Cluster ' + features.join(' ')
+model.centers().eachWithIndex { c, i ->
+    println "   $i:   ${c*.multiply(4).collect('%.3f'::formatted).join('  ')}"
+}
+
 def result = GQ {
     from w in m
     groupby w.Cluster
