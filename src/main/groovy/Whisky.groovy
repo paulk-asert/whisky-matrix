@@ -85,7 +85,7 @@ sc.exportPng('matrixWhiskyScatterPlot.png' as File)
 new SwingWrapper(sc.exportSwing().chart).displayChart()
 
 def corr = [size<..0, 0..<size].combinations().collect { i, j ->
-    Correlation.cor(data*.getAt(j), data*.getAt(i)) * 100 as int
+    Correlation.cor(data*.getAt(j), data*.getAt(i)).round(2)
 }
 
 def corrMatrix = Matrix.builder().data(X: 0..<corr.size(), Heat: corr)
