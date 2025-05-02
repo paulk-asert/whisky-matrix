@@ -33,7 +33,7 @@ features.each { feature ->
 }
 println m.head(3)
 
-def selected= m.subset{ it.Fruity > 0.5 && it.Sweetness > 0.5 }
+def selected = m.subset{ it.Fruity > 0.5 && it.Sweetness > 0.5 }
 println selected.dimensions()
 println selected.head(10)
 
