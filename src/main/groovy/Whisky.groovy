@@ -22,23 +22,23 @@ import se.alipsa.matrix.xchart.ScatterChart
 import smile.clustering.KMeans
 import smile.feature.extraction.PCA
 
-def url = getClass().getResource('whisky.csv')
+var url = getClass().getResource('whisky.csv')
 Matrix m = CsvImporter.importCsv(url).dropColumns('RowID')
 println m.dimensions()
 
-def features = m.columnNames() - 'Distillery'
-def size = features.size()
+var features = m.columnNames() - 'Distillery'
+var size = features.size()
 features.each { feature ->
     m.apply(feature) { it.toDouble() / 4 }
 }
 println m.head(3)
 
-def selected = m.subset{ it.Fruity > 0.5 && it.Sweetness > 0.5 }
+var selected = m.subset{ it.Fruity > 0.5 && it.Sweetness > 0.5 }
 println selected.dimensions()
 println selected.head(10)
 
-def aberlour = selected.subset(0..0)
-def rc = RadarChart.create(aberlour)
+var aberlour = selected.subset(0..0)
+var rc = RadarChart.create(aberlour)
     .addSeries('Distillery', 80)
 
 rc.exportPng('matrixAberlourRadar.png' as File)
@@ -50,8 +50,8 @@ rc = RadarChart.create(selected)
 rc.exportPng('matrixWhiskySelectionsRadar.png' as File)
 new SwingWrapper(rc.exportSwing().chart).displayChart()
 
-def data = m.selectColumns(*features) as double[][]
-def model = KMeans.fit(data,3, 20)
+double[][] data = m.selectColumns(features)
+var model = KMeans.fit(data,3, 20)
 m['Cluster'] = model.group().toList()
 
 println 'Cluster ' + features.join(' ')
@@ -59,7 +59,7 @@ model.centers().eachWithIndex { c, i ->
     println "   $i:   ${c*.multiply(4).collect('%.3f'::formatted).join('  ')}"
 }
 
-def result = GQ {
+var result = GQ {
     from w in m
     groupby w.Cluster
     orderby w.Cluster
@@ -69,31 +69,31 @@ println result
 
 assert m.rows().countBy{ it.Cluster } == [0:51, 1:23, 2:12]
 
-def pca = PCA.fit(data)
-def projected = pca.getProjection(2).apply(data)
+var pca = PCA.fit(data)
+var projected = pca.getProjection(2).apply(data)
 m['X'] = projected*.getAt(0)
 m['Y'] = projected*.getAt(1)
 
-def clusters = m['Cluster'].toSet()
-def sc = ScatterChart.create(m)
+var clusters = m['Cluster'].toSet()
+var sc = ScatterChart.create(m)
 sc.title = 'Whisky Flavor Clusters'
 for (i in clusters) {
-    def series = m.subset('Cluster', i)
+    var series = m.subset('Cluster', i)
     sc.addSeries("Cluster $i", series.column('X'), series.column('Y'))
 }
 sc.exportPng('matrixWhiskyScatterPlot.png' as File)
 new SwingWrapper(sc.exportSwing().chart).displayChart()
 
-def corr = [size<..0, 0..<size].combinations().collect { i, j ->
+var corr = [size<..0, 0..<size].combinations().collect { i, j ->
     Correlation.cor(data*.getAt(j), data*.getAt(i)).round(2)
 }
 
-def corrMatrix = Matrix.builder().data(X: 0..<corr.size(), Heat: corr)
+var corrMatrix = Matrix.builder().data(X: 0..<corr.size(), Heat: corr)
     .types([Number] * 2)
     .matrixName('Heatmap')
     .build()
 
-def hc = HeatmapChart.create(corrMatrix)
+var hc = HeatmapChart.create(corrMatrix)
     .addSeries('Heat Series', features.reverse(), features, corrMatrix.column('Heat').collate(size))
 hc.exportPng('matrixWhiskyCorrHeatmap.png' as File)
 new SwingWrapper(hc.exportSwing().chart).displayChart()
